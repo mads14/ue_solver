@@ -1,0 +1,6 @@
+/objs/*
+!/objs/.gitkeep
+/networks/*
+!/networks/.gitkeep
+GEF
+output.txt
