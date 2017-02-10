@@ -77,9 +77,9 @@ def write_OD_textfile_in_cpp_format(clean_ODs, filename):
 def count_total_origins_or_dests(ODs_list):
     dict = {}
     for od in ODs_list:
-        if not dict.has_key(od[0]):
+        if not (od[0] in dict):
             dict[od[0]] = 1
-        if not dict.has_key(od[1]):
+        if not (od[1] in dict):
             dict[od[1]] = 1
     return len(dict.items())
 

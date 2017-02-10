@@ -11,6 +11,11 @@ from ue_solver.conversions import *
 #                          simple_geom=False)
 
 
-def geojson_to_networkx_test():
-     geojson_to_networkx(geojson_f ='resources/network/sf_secondary_all_roads_0p8/network.geojson', 
-                         graph_f='resources/network/sf_secondary_all_roads_0p8/network_graph.txt')
+def test_geojson_to_networkx():
+     g = geojson_to_networkx(geojson_f ='resources/network/testnetwork/selection.geojson', 
+                         graph_f='resources/network/testnetwork/selection_graph.txt')
+     #check that number of lines in geojson is the same as text 
+     #g.number_of_edges()
+     #network to geojson 
+     #test if graphs are equal
+     

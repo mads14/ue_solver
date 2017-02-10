@@ -23,7 +23,7 @@ def run_solver(network_file, demand_file, output_file, distance_factor=0,
                                toll_factor,gap])
 
     start = time.time()
-    print 'started at', start
+    print('started at', start)
 
     #create and write the .sh file
     writeSolverSh = open("Solver.sh", "w")
@@ -31,9 +31,9 @@ def run_solver(network_file, demand_file, output_file, distance_factor=0,
     writeSolverSh.close()
 
     # Open bash to run FW algorithm
-    print 'Running FW algorithm'
+    print('Running FW algorithm')
     result = subprocess.check_output(["/bin/bash", "Solver.sh"])
-    print 'done in', time.time()-start, 'sec'
+    print('done in', time.time()-start, 'sec')
 
 from ue_solver.modify_network import add_virtual_nodes
 from ue_solver.conversions import graph_to_network_file
