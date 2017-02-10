@@ -80,7 +80,7 @@ def df_vmt_vht_delay(df, output_summary, totalODflow = 0, min_speed = 0):
     totalvmt = np.sum(df['vmt'])
     totalvht = np.sum(df['vht'])
     totaldelay = np.sum(df['delay'])
-    print totalvmt, totalvht, totaldelay
+    print(totalvmt, totalvht, totaldelay)
     if totalODflow != 0:
         d = {'vmt': [totalvmt, float(totalvmt/totalODflow)],
              'vht': [totalvht, float(totalvht/totalODflow)],

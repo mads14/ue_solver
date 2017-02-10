@@ -23,7 +23,6 @@ def networkx_to_df(graph, simple_geom = False):
 
     else:
         network_g = graph
-    print len(network_g.edges())
 
     # with open (networkx_f) as f:
     #     network_g = json.load(f)
@@ -73,7 +72,8 @@ def end_prop(next):
 
 def prop(name, value):
     # try:
-    if type(value) in [str, unicode]: return '        "{}": "{}",\n'.format(name, value)
+    #deleted unicode because unicode was replaced by str in python3
+    if type(value) in [str]: return '        "{}": "{}",\n'.format(name, value)
     return '        "{}": {},\n'.format(name, value)
     # except(UnicodeEncodeError):
         # if type(value) in [str, unicode]: return '        "{}": "{}",\n'.format(name, 'NA')
@@ -132,7 +132,7 @@ def geojson_to_networkx(geojson_f, graph_f=None):
     geo_dict['osm_init'] = {}
     geo_dict['osm_term'] = {}
 
-    for link in geo_dict.values()[0].keys():
+    for link in list(geo_dict.values())[0].keys():
         geo_dict['osm_init'][link] = link[0]
         geo_dict['osm_term'][link] = link[1]
 
@@ -163,11 +163,24 @@ def geojson_to_networkx(geojson_f, graph_f=None):
 
 
 ########################Save_graph_and_network_files########################
+#custom encoder from http://stackoverflow.com/questions/27050108/convert-numpy-type-to-python/27050186#27050186
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(MyEncoder, self).default(obj)
+
 def save_graph(G, filepath):
     data =  json_graph.node_link_data(G)
     # dump json to a file
+
     with open(filepath, 'w') as outfile:
-        json.dump(data, outfile)
+        json.dump(data, fp = outfile, cls = MyEncoder)
 
 
 def graph_to_network_file(graph, filepath):
@@ -196,7 +209,7 @@ def graph_to_network_file(graph, filepath):
         f.writerow(['~ Init/Term/Cap/Length/FreeFlowTime/B=0.15/Power=4/Speed limit/Toll/Type'])
         
         #for i,j in G.edges_iter():
-        for i,j,data in sorted(G.edges(data=True), key = lambda (i,j,data): (data['init'],data['term'])):
+        for i,j,data in sorted(G.edges(data=True), key = lambda x: (x[2]['init'], x[2]['term'])):
             f.writerow([G.edge[i][j][0][x] for x in ['init', 'term', 'capacity', 'length', 'fftt',
                                                      'B', 'power', 'freeflow_speed', 'toll', 'type']])
 

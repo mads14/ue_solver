@@ -1,6 +1,6 @@
 import networkx as nx
 from networkx.readwrite import json_graph
-from haversine import haversine
+# from haversine import haversine
 from sklearn.neighbors import KNeighborsClassifier
 from ue_solver.conversions import *
 from geopandas.tools import sjoin
@@ -8,9 +8,25 @@ import json
 import geopandas as gpd
 import pandas as pd
 import numpy as np
+import math as math
+import os
 
 
 #####################add_virtual_nodes#####################
+def haversinefunction(origin, destination):
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6371 * 10**6 # m
+
+    dlat = math.radians(lat2-lat1)
+    dlon = math.radians(lon2-lon1)
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) \
+        * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = radius * c * radius
+
+    return d
+
 def add_virtual_nodes(networkx_f, taz_shpf, n_neighbors):#, taz_dict_outf, graph_name):
     with open (networkx_f) as f:
         data = json.load(f)
@@ -36,7 +52,8 @@ def add_virtual_nodes(networkx_f, taz_shpf, n_neighbors):#, taz_dict_outf, graph
 
         for neighbor,data in nodes[neighbors[i]]:
 
-            distance = haversine(virtual_nd_coords[::-1], data['coords'][::-1])*1000
+            distance = haversinefunction(tuple(virtual_nd_coords[::-1]), 
+                                         tuple(data['coords'][::-1]))
             travel_speed = 6.7 #m/s = 15mph
 
             # add edges from virtual node to k nearests neighbors
@@ -78,7 +95,7 @@ def append_city_names(ca_cities_shp, geojson_f):
     # read links geojson
     links=gpd.GeoDataFrame.from_file(geojson_f)
     if 'city' in links.columns:
-        print 'network already has city labels'
+        print('network already has city labels')
         return None
 
     # read city shapefile
@@ -128,7 +145,12 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
                                  links['capacity']*percent_cap,
                                  links['capacity'])
 
-    
+    if not os.path.exists(os.path.dirname(geojson_outf)):
+        try:
+            os.makedirs(os.path.dirname(geojson_outf))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
     with open(geojson_outf, 'w') as f:
         f.write(links.to_json())
 
@@ -156,6 +178,12 @@ def cut_links(geojson_inf, links_f, geojson_outf, graph_outf):
     
 
     # save network geojson
+    if not os.path.exists(os.path.dirname(geojson_outf)):
+        try:
+            os.makedirs(os.path.dirname(geojson_outf))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
     with open(geojson_outf, 'w') as f:
         f.write(result.to_json())
 
@@ -171,7 +199,7 @@ def remove_non_accessible_nodes(G, start_node = None):
     If start_node = None, then set start node to middle node.
     '''
     l = G.number_of_nodes()
-    start_node = G.nodes()[l/2]
+    start_node = G.nodes()[l//2]
 
     # filter for path from center node
     node_list = G.nodes()
