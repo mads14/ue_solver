@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import json
 import csv
+import os
 
 
 ########################Networkx_to_geojson########################
@@ -109,6 +110,18 @@ def df_to_geoJson(df, geojson_fileout, with_flow=False):
             out += end_prop(next = False)
     out += '\n'
     out+= '}'
+    if not os.path.exists(os.path.dirname(geojson_fileout)):
+        try:
+            os.makedirs(os.path.dirname(geojson_fileout))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+    # if directory exists            
+    else: 
+        # ask if user wants to rewrite
+        rewrite = input("This file already exists. Would you like to write over it? (y/n)")
+        if rewrite == 'n':
+            return None
     with open(geojson_fileout, 'w') as f:
         f.write(out)
 
