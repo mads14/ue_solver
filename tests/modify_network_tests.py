@@ -11,8 +11,6 @@ from ue_solver.conversions import *
 #     # add some tests here
 
 def test_label_road_network():
-    # (1) NETWORK TO GEOJSON
-    # (2) DO THE THING
     ca_cities_shp = 'resources/shapefiles/ca_cities_2014'
     geojson_starter = 'resources/network/testnetwork/new_selection_without_cities.geojson'
     road_network_geojson = 'resources/network/testnetwork/new_function_result.geojson'
