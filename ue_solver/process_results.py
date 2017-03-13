@@ -12,9 +12,9 @@ def results_to_geojson(results_f, geojson_inf, geojson_outf):
 	results file is merged with the network geojson file based on the init and term ids
 	of each link. Saves geojson with merged results.
 
-	results_f = string, path to results text file from solver
-	geojson_inf = string, path to network geojson
-	geojson_outf = string, path save location for results geojson
+	- results_f: type str, path to results text file from solver
+	- geojson_inf: type str, path to network geojson
+	- geojson_outf: type str, path save location for results geojson
 	'''
 	geodf = create_results_df(results_f, geojson_inf)
 	if not os.path.exists(os.path.dirname(geojson_outf)):
@@ -58,6 +58,15 @@ def create_results_df(results_f, network_geojson):
 
 	
 def geoj_vmt_vht_delay(results_geoj, cities_aggregate_output_file, output_summary, totalODflow = 0, min_speed = 0, save_path = 0):
+	'''
+	Calculates VMT, VHT, and delay from results_geoj 
+	- results_geoj: type str, filepath to results geoJSON 
+	- cities_aggregate_output_file:
+	- output_summary:
+	- totalODflow: type int (float?), total demand (total number of passengers)
+	- min_speed: type float, force speed to min_speed if link speed < minspeed 
+	- save_path: type str, save plot to this filepath 
+	'''
 	results_df = gpd.read_file(results_geoj)
 	results = df_vmt_vht_delay(results_df, output_summary, totalODflow, min_speed)
 	# results.to_csv(processing_output)
@@ -97,9 +106,9 @@ def df_vmt_vht_delay(df, output_summary, totalODflow = 0, min_speed = 0):
 			 'vht': [totalvht, float(totalvht/totalODflow)],
 			 'delay': [totaldelay, float(totaldelay/totalODflow)]}
 		totaldf = pd.DataFrame(d, index = ['total','per passenger'])
-		if not os.path.exists(os.path.dirname(geojson_outf)):
+		if not os.path.exists(os.path.dirname(output_summary)):
 			try:
-				os.makedirs(os.path.dirname(geojson_outf))
+				os.makedirs(os.path.dirname(output_summary))
 			except OSError as exc:
 				if exc.errno != errno.EEXIST:
 					raise

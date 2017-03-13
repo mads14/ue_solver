@@ -93,6 +93,15 @@ def get_nearest_neighbors(taz_coords, nodes, n_neighbors):
 #####################append_city_names#####################
 def append_city_names(ca_cities_shp, geojson_f, geojson_outf):
     # read links geojson
+    '''
+    Appends city type, county, and city name to the geojson network file so that locations are 
+    easier to identify. This is specific to the California shapefile data schema, so the next function 
+    below (label_road_network) was made to work for general schemas. 
+
+    - ca_cities_shp: type str, shapefile of california cities
+    - geojson_f: type str, geoJSOn file of road network 
+    - geojson_outf: type str, output geoJSON with identifying city names 
+    '''
     links = gpd.GeoDataFrame.from_file(geojson_f)
     if 'city' in links.columns:
         print('network already has city labels')
@@ -114,7 +123,22 @@ def append_city_names(ca_cities_shp, geojson_f, geojson_outf):
 
 ###########alternative_append_city_names############
 def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf, rename_attributes = None):
-    #####################append_city_names#####################
+    
+    '''
+    Generalized function of append_city_names:
+    Allows user to specify which attributes to keep from the input shape file
+    Spatial join shape file with network, so that network file now has identifying labels
+
+    - input_shp: type str, filepath for generalized shapefile for cities, neighborhoods, from any state 
+    - road_network_geojson: type str, filepath for input geoJSON network file 
+    - attributes: type str OR str array, selected attributes that will be joined
+    - geojson_outf: type str, filepath for output file with identifying labels 
+    - rename_attributes: type str OR str array, either string or array of strings (should match attributes), can be used if user
+      would like to rename the attributes to more user-friendly names
+
+    Example:
+    label_road_network('maryland_counties.shp','network.geojson','countyname00','new_network.geojson', 'CountyName')
+    '''
     # read links geojson
     links = gpd.GeoDataFrame.from_file(road_network_geojson)
 
@@ -163,6 +187,7 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
     
     inputs
     attr_dict = {key: [list of values that will be changed]}
+        example: {'county': ['Alameda', 'Berkeley', 'Emeryville']}
     precent_cap = type decimal, percent of existing capacity roads will now have
     geojson_in = type str, filepath network geojson file
     geojson_out = type str, filepath save locations of modified network geojson file
@@ -203,7 +228,12 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
 #####################cut_links#####################
 def cut_links(geojson_inf, links_f, geojson_outf, graph_outf):
     '''
+    Removes links in the road network to simulate roads being closed off or inaccessible. 
 
+    - geojson_inf: type str geoJSON file, filepath network geojson file
+    - links_f: type str CSV file, filepath for csv file of links to delete   
+    - geojson_outf: type str geoJSON file, filepath save locations of modified network geojson file
+    - graph_outf: type str networkx file, reconstructed graph file from geojson outfile 
     '''
     if not os.path.exists(os.path.dirname(geojson_outf)):
         try:
@@ -292,6 +322,16 @@ def reassign_node_ids(G):
     return G
 
 def remove_duplicate_links(geojson_inf, geojson_outf):
+    '''
+    If this is the first time creating a geoJSON from the networkx file, remove duplicate records for streets. 
+    For example, when the spatial join joins the networkx with the geoJSON, some streets may connect two cities 
+    and will therefore be recorded twice, once for city A and once for city B.
+
+    Removing duplicates will just keep the first city that was joined to the street. 
+
+    - geojson_inf: original geoJSON
+    - geojson_outf: output geoJSON with removed duplicates 
+    '''
     networkdf = gpd.GeoDataFrame.from_file(geojson_inf)
     networkdf = networkdf.sort_values(by = ['init', 'term', 'capacity'])
     df = networkdf.drop_duplicates(subset = ['init', 'term'], keep = 'last')
