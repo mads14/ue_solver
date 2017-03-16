@@ -135,8 +135,8 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
 
     roads_to_update = 1
     for k,v in attr_dict.items():
-        if k == 'type':
-            v = [r+';' for r in v]
+        # if k == 'type':
+        #     v = [r+';' for r in v]
         roads_to_update = roads_to_update & links[k].isin(v)
 
         
