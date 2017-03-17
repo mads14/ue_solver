@@ -47,18 +47,24 @@ def create_results_df(results_f, network_geojson):
 
     
 def geoj_vmt_vht_delay(results_geoj, cities_aggregate_output_file, output_summary, totalODflow = 0, min_speed = 0, save_path = 0):
-    results_df = gpd.read_file(results_geoj)
+    if type(results_geoj) == str:
+        results_df = gpd.read_file(results_geoj)
+    else:
+        results_df = results_geoj
     results = df_vmt_vht_delay(results_df, output_summary, totalODflow, min_speed)
     # results.to_csv(processing_output)
     results = results.groupby(['city']).sum()
     results = results.ix[:,['vmt', 'vht', 'delay']]
-    results.to_csv(cities_aggregate_output_file)
-    if save_path != 0:
-        save_plot(results, save_path)
+    return results
+    # results.to_csv(cities_aggregate_output_file)
+    # if save_path != 0:
+    #     save_plot(results, save_path)
 
 
 def df_vmt_vht_delay(df, output_summary, totalODflow = 0, min_speed = 0):
     '''
+    aggregate vmt, vht delay for the network.
+
     df = results dataframe
     totalODflow = total demand (total number of passengers)
     min_speed = force speed to min_speed if link speed < minspeed
