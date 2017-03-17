@@ -91,18 +91,9 @@ def get_nearest_neighbors(taz_coords, nodes, n_neighbors):
     return knn.kneighbors(taz_coords, n_neighbors, False)
 
 #####################append_city_names#####################
-def append_city_names(ca_cities_shp, geojson_f, geojson_outf):
+def append_city_names(ca_cities_shp, geojson_f):
     # read links geojson
-    '''
-    Appends city type, county, and city name to the geojson network file so that locations are 
-    easier to identify. This is specific to the California shapefile data schema, so the next function 
-    below (label_road_network) was made to work for general schemas. 
-
-    - ca_cities_shp: type str, shapefile of california cities
-    - geojson_f: type str, geoJSOn file of road network 
-    - geojson_outf: type str, output geoJSON with identifying city names 
-    '''
-    links = gpd.GeoDataFrame.from_file(geojson_f)
+    links=gpd.GeoDataFrame.from_file(geojson_f)
     if 'city' in links.columns:
         print('network already has city labels')
         return None
@@ -112,71 +103,18 @@ def append_city_names(ca_cities_shp, geojson_f, geojson_outf):
     ca_cities = ca_cities[['CityType','County','NAME','geometry']]
     ca_cities = ca_cities.rename(columns={'NAME':'city','County':'county',
                                           'CityType':'city_type'})
+
+    
     # spatial join
     links_w_city=sjoin(links, ca_cities, 'left')
 
     # if link in more than one city, then will be doubled in table, drop duplicates
     links_w_city = links_w_city.reset_index().drop_duplicates(subset='index').set_index('index')
     links_w_city = links_w_city.drop('index_right',1)
-    with open(geojson_outf, 'w') as f:
+    with open(geojson_f, 'w') as f:
         f.write(links_w_city.to_json())
 
-###########alternative_append_city_names############
-def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf, rename_attributes = None):
-    
-    '''
-    Generalized function of append_city_names:
-    Allows user to specify which attributes to keep from the input shape file
-    Spatial join shape file with network, so that network file now has identifying labels
 
-    - input_shp: type str, filepath for generalized shapefile for cities, neighborhoods, from any state 
-    - road_network_geojson: type str, filepath for input geoJSON network file 
-    - attributes: type str OR str array, selected attributes that will be joined
-    - geojson_outf: type str, filepath for output file with identifying labels 
-    - rename_attributes: type str OR str array, either string or array of strings (should match attributes), can be used if user
-      would like to rename the attributes to more user-friendly names
-
-    Example:
-    label_road_network('maryland_counties.shp','network.geojson','countyname00','new_network.geojson', 'CountyName')
-    '''
-    # read links geojson
-    links = gpd.GeoDataFrame.from_file(road_network_geojson)
-
-    # read input shapefile
-    network = gpd.GeoDataFrame.from_file(input_shp)
-
-    # if only one attribute  
-    if type(attributes) == str:
-        if attributes in network.columns:
-            network = network[[attributes, 'geometry']]
-            if rename_attributes is not None:
-                network = network.rename(columns={attributes:rename_attributes})
-        else:
-            raise ValueError("Column name is not in input_shp")
-
-    # if multiple attributes
-    elif type(attributes) is list:
-        # check if column name in input_shp
-        for x in attributes:
-            if x not in network.columns:
-                raise ValueError("Column name is not in input_shp")
-        if 'geometry' in network.columns:
-            attributes.append('geometry')
-        network = network[[attributes]]
-        if len(attributes) != len(rename_attributes):
-            raise ValueError("Number of attributes different from number of rename attributes.")
-        rename_columns = {}
-        for i in range(len(attributes)):
-            rename_columns.update({attributes[i]:rename_attributes[i]})
-        network = network.rename(columns = rename_columns)
-    # spatial join
-    links_w_city = sjoin(links, network, 'left')
-
-    # if link in more than one city, then will be doubled in table, drop duplicates
-    links_w_city = links_w_city.reset_index().drop_duplicates(subset='index').set_index('index')
-    links_w_city = links_w_city.drop('index_right',1)
-    with open(geojson_outf, 'w') as f:
-        f.write(links_w_city.to_json())
 
 #####################update_cap#####################
 def update_capacity(attr_dict, percent_cap, geojson_inf, 
@@ -187,24 +125,12 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
     
     inputs
     attr_dict = {key: [list of values that will be changed]}
-        example: {'county': ['Alameda', 'Berkeley', 'Emeryville']}
     precent_cap = type decimal, percent of existing capacity roads will now have
     geojson_in = type str, filepath network geojson file
     geojson_out = type str, filepath save locations of modified network geojson file
     graph_f = path of updated networkx or None if don't want to save networkx graph
     '''
-    if not os.path.exists(os.path.dirname(geojson_outf)):
-        try:
-            os.makedirs(os.path.dirname(geojson_outf))
-        except OSError as exc:
-            if exc.errno != errno.EEXIST:
-                raise
-    # if directory exists            
-    else: 
-        # ask if user wants to rewrite
-        rewrite = input("This file already exists. Would you like to write over it? (y/n)")
-        if rewrite == 'n':
-            return None
+
     links = gpd.read_file(geojson_inf)
 
     roads_to_update = 1
@@ -219,6 +145,12 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
                                  links['capacity']*percent_cap,
                                  links['capacity'])
 
+    if not os.path.exists(os.path.dirname(geojson_outf)):
+        try:
+            os.makedirs(os.path.dirname(geojson_outf))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
     with open(geojson_outf, 'w') as f:
         f.write(links.to_json())
 
@@ -228,25 +160,8 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
 #####################cut_links#####################
 def cut_links(geojson_inf, links_f, geojson_outf, graph_outf):
     '''
-    Removes links in the road network to simulate roads being closed off or inaccessible. 
 
-    - geojson_inf: type str geoJSON file, filepath network geojson file
-    - links_f: type str CSV file, filepath for csv file of links to delete   
-    - geojson_outf: type str geoJSON file, filepath save locations of modified network geojson file
-    - graph_outf: type str networkx file, reconstructed graph file from geojson outfile 
     '''
-    if not os.path.exists(os.path.dirname(geojson_outf)):
-        try:
-            os.makedirs(os.path.dirname(geojson_outf))
-        except OSError as exc:
-            if exc.errno != errno.EEXIST:
-                raise
-    # if directory exists            
-    else: 
-        # ask if user wants to rewrite
-        rewrite = input("This file already exists. Would you like to write over it? (y/n)")
-        if rewrite == 'n':
-            return None
     geojson_f = gpd.GeoDataFrame.from_file(geojson_inf)
     geojson_f[['osm_init','osm_term']] = geojson_f[['osm_init','osm_term']].apply(pd.to_numeric)
     
@@ -263,6 +178,12 @@ def cut_links(geojson_inf, links_f, geojson_outf, graph_outf):
     
 
     # save network geojson
+    if not os.path.exists(os.path.dirname(geojson_outf)):
+        try:
+            os.makedirs(os.path.dirname(geojson_outf))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
     with open(geojson_outf, 'w') as f:
         f.write(result.to_json())
 
@@ -322,33 +243,11 @@ def reassign_node_ids(G):
     return G
 
 def remove_duplicate_links(geojson_inf, geojson_outf):
-    '''
-    If this is the first time creating a geoJSON from the networkx file, remove duplicate records for streets. 
-    For example, when the spatial join joins the networkx with the geoJSON, some streets may connect two cities 
-    and will therefore be recorded twice, once for city A and once for city B.
-
-    Removing duplicates will just keep the first city that was joined to the street. 
-
-    - geojson_inf: original geoJSON
-    - geojson_outf: output geoJSON with removed duplicates 
-    '''
     networkdf = gpd.GeoDataFrame.from_file(geojson_inf)
     networkdf = networkdf.sort_values(by = ['init', 'term', 'capacity'])
     df = networkdf.drop_duplicates(subset = ['init', 'term'], keep = 'last')
     df = df.reset_index(level=['osm_init', 'osm_term'])
     df['key'] = 0
-    if not os.path.exists(os.path.dirname(geojson_outf)):
-        try:
-            os.makedirs(os.path.dirname(geojson_outf))
-        except OSError as exc:
-            if exc.errno != errno.EEXIST:
-                raise
-    # if directory exists            
-    else: 
-        # ask if user wants to rewrite
-        rewrite = input("This file already exists. Would you like to write over it? (y/n)")
-        if rewrite == 'n':
-            return None
     with open(geojson_outf, 'w') as f:
         f.write(df.to_json())
 
