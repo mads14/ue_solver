@@ -15,16 +15,7 @@ def test_geojson_to_networkx():
      g = geojson_to_networkx(geojson_f ='resources/network/testnetwork/selection.geojson', 
                          graph_f='resources/network/testnetwork/selection_graph.txt')
      #check that number of lines in geojson is the same as text 
-     geojson_f = 'resources/network/testnetwork/selection.geojson'
-     graph_f= 'resources/network/testnetwork/selection_graph.txt'
-     num_lines_gjf = sum(1 for line in open(geojson_f))
-     geojson = gpd.read_file(geojson_f).shape[0]
-     num_edges = g.number_of_edges()
-     assert geojson == num_edges
-    
-
      #g.number_of_edges()
      #network to geojson 
      #test if graphs are equal
-
      
