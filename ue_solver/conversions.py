@@ -5,12 +5,17 @@ import pandas as pd
 import numpy as np
 import json
 import csv
+import os
 
 
 ########################Networkx_to_geojson########################
 def networkx_to_geojson(graph_f, geojson_outf, simple_geom=False):
     '''
-    converts a networkx file to a geojson
+    Converts graph_f (a networkx graph) into a pandas DataFrame, then converts the DataFrame into a geoJSON file
+    - graph_f: networkx file 
+    - geojson_outf: file to write to 
+    - simple_geom: set to True if user wants to use less memory by only saving straight-line paths between 
+      origin and destination, rather than actual shape of path
     '''
     df = networkx_to_df(graph_f, simple_geom)
     df_to_geoJson(df, geojson_outf)
@@ -109,6 +114,18 @@ def df_to_geoJson(df, geojson_fileout, with_flow=False):
             out += end_prop(next = False)
     out += '\n'
     out+= '}'
+    if not os.path.exists(os.path.dirname(geojson_fileout)):
+        try:
+            os.makedirs(os.path.dirname(geojson_fileout))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+    # if directory exists            
+    else: 
+        # ask if user wants to rewrite
+        rewrite = input("This file already exists. Would you like to write over it? (y/n)")
+        if rewrite == 'n':
+            return None
     with open(geojson_fileout, 'w') as f:
         f.write(out)
 
