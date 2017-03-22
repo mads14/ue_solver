@@ -106,9 +106,9 @@ def df_vmt_vht_delay(df, output_summary, totalODflow = 0, min_speed = 0):
 			 'vht': [totalvht, float(totalvht/totalODflow)],
 			 'delay': [totaldelay, float(totaldelay/totalODflow)]}
 		totaldf = pd.DataFrame(d, index = ['total','per passenger'])
-		if not os.path.exists(os.path.dirname(geojson_outf)):
+		if not os.path.exists(os.path.dirname(output_summary)):
 			try:
-				os.makedirs(os.path.dirname(geojson_outf))
+				os.makedirs(os.path.dirname(output_summary))
 			except OSError as exc:
 				if exc.errno != errno.EEXIST:
 					raise
