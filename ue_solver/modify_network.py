@@ -123,22 +123,7 @@ def append_city_names(ca_cities_shp, geojson_f, geojson_outf):
 
 ###########alternative_append_city_names############
 def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf, rename_attributes = None):
-    
-    '''
-    Generalized function of append_city_names:
-    Allows user to specify which attributes to keep from the input shape file
-    Spatial join shape file with network, so that network file now has identifying labels
-
-    - input_shp: type str, filepath for generalized shapefile for cities, neighborhoods, from any state 
-    - road_network_geojson: type str, filepath for input geoJSON network file 
-    - attributes: type str OR str array, selected attributes that will be joined
-    - geojson_outf: type str, filepath for output file with identifying labels 
-    - rename_attributes: type str OR str array, either string or array of strings (should match attributes), can be used if user
-      would like to rename the attributes to more user-friendly names
-
-    Example:
-    label_road_network('maryland_counties.shp','network.geojson','countyname00','new_network.geojson', 'CountyName')
-    '''
+    #####################append_city_names#####################
     # read links geojson
     '''
     Generalized function of append_city_names:

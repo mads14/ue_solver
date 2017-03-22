@@ -85,11 +85,12 @@ def prop(name, value):
         
 def df_to_geoJson(df, geojson_fileout, with_flow=False):
     '''
-    df is a regular pandas dataframe (rather than a geopandas df), 
+    df: type regular pandas dataframe (rather than a geopandas df), 
     but it must have a geom column containing a list of coordinates 
     for the line or linestring: [[lon0, lat0],[lon1,lat1],...]
     all other columns in the dataframe will be converted to properties
     in the geojson file.
+    geojson_fileout: type str, file path for out file 
     '''
     begin = ' {"type": "FeatureCollection",\n  "features": [{ \n'
     begin_prop = '            ]},\n    "properties": {\n'
@@ -206,7 +207,7 @@ def graph_to_network_file(graph, filepath):
     Format is '~ Init/Term/Cap/Length/FreeFlowTime/B=0.15/Power=4/Speed limit/Toll/Type;' 
     tab delineated, with meta-data.
     :param G = networkx graph
-    :param filename is a sting, path of the place where the graph file should be saved
+    :param filename is a string, path of the place where the graph file should be saved
     '''
     if type(graph) == str:
         with open (graph) as f:
