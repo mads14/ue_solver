@@ -11,7 +11,11 @@ import os
 ########################Networkx_to_geojson########################
 def networkx_to_geojson(graph_f, geojson_outf, simple_geom=False):
     '''
-    converts a networkx file to a geojson
+    Converts graph_f (a networkx graph) into a pandas DataFrame, then converts the DataFrame into a geoJSON file
+    * graph_f: networkx file 
+    * geojson_outf: file to write to 
+    * simple_geom: set to True if user wants to use less memory by only saving straight-line paths between 
+      origin and destination, rather than actual shape of path
     '''
     df = networkx_to_df(graph_f, simple_geom)
     df_to_geoJson(df, geojson_outf)
@@ -81,11 +85,12 @@ def prop(name, value):
         
 def df_to_geoJson(df, geojson_fileout, with_flow=False):
     '''
-    df is a regular pandas dataframe (rather than a geopandas df), 
+    df: a regular pandas dataframe (rather than a geopandas df), 
     but it must have a geom column containing a list of coordinates 
     for the line or linestring: [[lon0, lat0],[lon1,lat1],...]
     all other columns in the dataframe will be converted to properties
     in the geojson file.
+    geojson_fileout: type str, file path of file out
     '''
     begin = ' {"type": "FeatureCollection",\n  "features": [{ \n'
     begin_prop = '            ]},\n    "properties": {\n'
