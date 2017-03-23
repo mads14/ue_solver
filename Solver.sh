@@ -1,1 +1,1 @@
-M_Steel_Solver/GEF resources/network/solver_network_file.txt resources/demand/solver_demand_file.txt resources/results/sf_secondary/demand_1p5_gap100.txt 0 0 100.0
+M_Steel_Solver/GEF resources/network/solver_network_file.txt resources/demand/solver_demand_file.txt resources/results/sf_secondary/demand_1p5_gap100.txt 0 0 10.0

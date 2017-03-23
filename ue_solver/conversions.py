@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 import json
 import csv
-import os
 
 
 ########################Networkx_to_geojson########################
@@ -115,27 +114,15 @@ def df_to_geoJson(df, geojson_fileout, with_flow=False):
             out += end_prop(next = False)
     out += '\n'
     out+= '}'
-    if not os.path.exists(os.path.dirname(geojson_fileout)):
-        try:
-            os.makedirs(os.path.dirname(geojson_fileout))
-        except OSError as exc:
-            if exc.errno != errno.EEXIST:
-                raise
-    # if directory exists            
-    else: 
-        # ask if user wants to rewrite
-        rewrite = input("This file already exists. Would you like to write over it? (y/n)")
-        if rewrite == 'n':
-            return None
     with open(geojson_fileout, 'w') as f:
         f.write(out)
 
 ########################Geojson_to_networkx########################
-def geojson_to_networkx(geojson_f, graph_f=None):
+def geojson_to_networkx(geojson_f, graph_f=None, indices = ['osm_init','osm_term']):
     geof = gpd.GeoDataFrame.from_file(geojson_f)
-    edge_tuples = [tuple(edge) for edge in geof[['osm_init','osm_term']].values]
+    edge_tuples = [tuple(edge) for edge in geof[indices].values]
     geof['key'] = 0
-    geof = geof.set_index(['osm_init','osm_term','key'])
+    geof = geof.set_index(indices+['key'])
     geo_dict = geof.to_dict()
 
     # construct networkx graph from geojson
@@ -143,16 +130,25 @@ def geojson_to_networkx(geojson_f, graph_f=None):
     G.add_edges_from(edge_tuples)
 
     # create a node dict from osm_id to network node id:
-    node_dict={k[0]: {'nid': v} for (k, v) in geo_dict['init'].items()}
-    node_dict2={k[1]: {'nid': v} for (k, v) in geo_dict['term'].items()}
+    # print {k: {'nid': k} for k in geof.index}    
+    if 'init' in indices:
+        node_dict={k[0]: {'nid': k[0]} for k in geof.index}    
+    else:
+        node_dict={k[0]: {'nid': v} for (k, v) in geo_dict['init'].items()}
+
+    if 'term' in indices:
+        node_dict2={k[1]: {'nid': k[1]} for k in geof.index}    
+    else:
+        node_dict2={k[1]: {'nid': v} for (k, v) in geo_dict['term'].items()}
+    
     node_dict.update(node_dict2)
 
-    geo_dict['osm_init'] = {}
-    geo_dict['osm_term'] = {}
+    geo_dict[indices[0]] = {}
+    geo_dict[indices[1]] = {}
 
     for link in list(geo_dict.values())[0].keys():
-        geo_dict['osm_init'][link] = link[0]
-        geo_dict['osm_term'][link] = link[1]
+        geo_dict[indices[0]][link] = link[0]
+        geo_dict[indices[1]][link] = link[1]
 
     for key0 in geo_dict.keys():
         for key,value in geo_dict[key0].items():
@@ -228,8 +224,17 @@ def graph_to_network_file(graph, filepath):
         
         #for i,j in G.edges_iter():
         for i,j,data in sorted(G.edges(data=True), key = lambda x: (x[2]['init'], x[2]['term'])):
-            f.writerow([G.edge[i][j][0][x] for x in ['init', 'term', 'capacity', 'length', 'fftt',
-                                                     'B', 'power', 'freeflow_speed', 'toll', 'type']])
+            try:
+                row = [G.edge[i][j][0][x] for x in ['init', 'term', 'capacity', 'length', 'fftt',
+                                                    'B', 'power', 'freeflow_speed', 'toll', 'type']]
+            except KeyError:
+                row = [G.edge[i][j][x] for x in ['init', 'term', 'capacity', 'length', 'fftt',
+                                                 'B', 'power', 'freeflow_speed', 'toll', 'type']]
+
+            if not row[-1].endswith(';'):
+                row[-1] += ';'
+                
+            f.writerow(row)
 
 
 
