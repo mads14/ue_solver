@@ -185,13 +185,12 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
     '''
     update a network file by changing the capacity according to the fields in attr_dict
     
-    inputs
-    attr_dict = {key: [list of values that will be changed]}
+    - attr_dict = {key: [list of values that will be changed]}
         example: {'county': ['Alameda', 'Berkeley', 'Emeryville']}
-    precent_cap = type decimal, percent of existing capacity roads will now have
-    geojson_in = type str, filepath network geojson file
-    geojson_out = type str, filepath save locations of modified network geojson file
-    graph_f = path of updated networkx or None if don't want to save networkx graph
+    - precent_cap = type decimal, percent of existing capacity roads will now have
+    - geojson_in = type str, filepath network geojson file
+    - geojson_out = type str, filepath save locations of modified network geojson file
+    - graph_f = path of updated networkx or None if don't want to save networkx graph
     '''
     if not os.path.exists(os.path.dirname(geojson_outf)):
         try:

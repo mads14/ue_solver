@@ -9,7 +9,7 @@ import matplotlib
 
 def results_to_geojson(results_f, geojson_inf, geojson_outf):
 	'''
-	results file is merged with the network geojson file based on the init and term ids
+	Results file is merged with the network geojson file based on the init and term ids
 	of each link. Saves geojson with merged results.
 
 	- results_f: type str, path to results text file from solver
@@ -35,11 +35,11 @@ def results_to_geojson(results_f, geojson_inf, geojson_outf):
 
 def create_results_df(results_f, network_geojson):
 	'''
-	results file is merged with the network geojson file based on the init and term ids
+	Results file is merged with the network geojson file based on the init and term ids
 	returns merged results dataframe
 
-	results_f = type string, path to results text file from solver
-	network_geoj = type string, path to network geojson
+	- results_f = type string, path to results text file from solver
+	- network_geoj = type string, path to network geojson
 	'''
 	links = gpd.read_file(network_geojson)
 	for col in ['cost','flow','flow/capacity','tt/fftt']:
@@ -60,6 +60,7 @@ def create_results_df(results_f, network_geojson):
 def geoj_vmt_vht_delay(results_geoj, cities_aggregate_output_file, output_summary, totalODflow = 0, min_speed = 0, save_path = 0):
 	'''
 	Calculates VMT, VHT, and delay from results_geoj 
+
 	- results_geoj: type str, filepath to results geoJSON 
 	- cities_aggregate_output_file:
 	- output_summary:
