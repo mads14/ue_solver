@@ -120,7 +120,7 @@ def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf
     # read links geojson
     '''
     Generalized function of append_city_names:
-    Allows user to specify which attributes to keep from the input shape file
+    Allows user to specify which attributes to keep from the input shape file. 
     Spatial join shape file with network, so that network file now has identifying labels
 
     - input_shp: type str, filepath for generalized shapefile for cities, neighborhoods, from any state 
@@ -174,21 +174,13 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
     '''
     update a network file by changing the capacity according to the fields in attr_dict
     
-<<<<<<< HEAD
     - attr_dict = {key: [list of values that will be changed]}
         example: {'county': ['Alameda', 'Berkeley', 'Emeryville']}
     - precent_cap = type decimal, percent of existing capacity roads will now have
     - geojson_in = type str, filepath network geojson file
     - geojson_out = type str, filepath save locations of modified network geojson file
     - graph_f = path of updated networkx or None if don't want to save networkx graph
-=======
-    inputs
-    attr_dict = {key: [list of values that will be changed]}
-    precent_cap = type decimal, percent of existing capacity roads will now have
-    geojson_in = type str, filepath network geojson file
-    geojson_out = type str, filepath save locations of modified network geojson file
-    graph_f = path of updated networkx or None if don't want to save networkx graph
->>>>>>> c07400fc6481c2e95f3dd8e183f5adeebae2b4fe
+    
     '''
 
     links = gpd.read_file(geojson_inf)
@@ -220,7 +212,12 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
 #####################cut_links#####################
 def cut_links(geojson_inf, links_f, geojson_outf, graph_outf):
     '''
+    Removes links in the road network to simulate roads being closed off or inaccessible. 
 
+    - geojson_inf: type str geoJSON file, filepath network geojson file
+    - links_f: type str CSV file, filepath for csv file of links to delete   
+    - geojson_outf: type str geoJSON file, filepath save locations of modified network geojson file
+    - graph_outf: type str networkx file, reconstructed graph file from geojson outfile 
     '''
     geojson_f = gpd.GeoDataFrame.from_file(geojson_inf)
     geojson_f[['osm_init','osm_term']] = geojson_f[['osm_init','osm_term']].apply(pd.to_numeric)
