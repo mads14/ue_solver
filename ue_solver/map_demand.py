@@ -11,17 +11,17 @@ import json
 from sklearn.neighbors import KNeighborsClassifier
 
 
-def demand_to_virtual_node(taz_demand_csv, taz_node_dict, scale, demand_outf):
+def demand_to_virtual_node(demand_csv, node_dict, scale, demand_outf):
     # taz_dict_f = 'resources/input_files/demand/taz_dict.txt'
-    taz_demand_df = pd.read_csv(taz_demand_csv)
-    taz_node_dict = pd.DataFrame.from_dict(taz_node_dict).T
     # taz_node_dict = pd.read_json(taz_dict_f, dtype='int').T
+    demand_df = pd.read_csv(demand_csv)
+    node_dict = pd.DataFrame.from_dict(node_dict).T
 
-    taz_demand_df['origin_node'] = taz_demand_df['tazi'].map(taz_node_dict['origin'], 'ignore')
-    taz_demand_df['dest_node'] = taz_demand_df['tazj'].map(taz_node_dict['destination'], 'ignore')
-    taz_demand_df.dropna(inplace=True)
-    node_demand_df = taz_demand_df[['origin_node','dest_node']].astype(int)
-    node_demand_df['flow (whole morning commute)'] = taz_demand_df['flow (whole morning commute)']
+    demand_df['origin_node'] = demand_df['i'].map(node_dict['origin'], 'ignore')
+    demand_df['dest_node'] = demand_df['j'].map(node_dict['destination'], 'ignore')
+    demand_df.dropna(inplace=True)
+    node_demand_df = demand_df[['origin_node','dest_node']].astype(int)
+    node_demand_df['flow (whole morning commute)'] = demand_df['flow (whole morning commute)']
     node_demand_scaled = scale_demand(node_demand_df, scale)
 
     write_output(node_demand_scaled.as_matrix(), demand_outf)
