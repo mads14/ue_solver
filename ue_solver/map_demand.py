@@ -21,7 +21,7 @@ def demand_to_virtual_node(demand_csv, node_dict, scale, demand_outf):
     demand_df['dest_node'] = demand_df['j'].map(node_dict['destination'], 'ignore')
     demand_df.dropna(inplace=True)
     node_demand_df = demand_df[['origin_node','dest_node']].astype(int)
-    node_demand_df['flow (whole morning commute)'] = demand_df['flow (whole morning commute)']
+    node_demand_df['flow'] = demand_df['flow']
     node_demand_scaled = scale_demand(node_demand_df, scale)
 
     write_output(node_demand_scaled.as_matrix(), demand_outf)
@@ -29,7 +29,7 @@ def demand_to_virtual_node(demand_csv, node_dict, scale, demand_outf):
 
 def scale_demand(node_demand_df, scale):
     scaled_demand = node_demand_df[['origin_node','dest_node']].astype(int)
-    scaled_demand['demand'] = node_demand_df['flow (whole morning commute)']/float(scale)
+    scaled_demand['demand'] = node_demand_df['flow']/float(scale)
     return scaled_demand
 
 def write_output(ODS_nodes, fname):
