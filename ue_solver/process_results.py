@@ -17,10 +17,10 @@ def results_to_geojson(results_f, geojson_inf, geojson_outf):
     - geojson_inf = string, path to network geojson
     - geojson_outf = string, path save location for results geojson
     '''
-	geodf = create_results_df(results_f, geojson_inf)
+    geodf = create_results_df(results_f, geojson_inf)
 
-	with open(geojson_outf, 'w') as f:
-		f.write(geodf.to_json())
+    with open(geojson_outf, 'w') as f:
+        f.write(geodf.to_json())
 
 
 def create_results_df(results_f, network_geojson):
