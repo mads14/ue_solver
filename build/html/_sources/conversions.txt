@@ -1,0 +1,25 @@
+Documentation for the Code
+**************************
+
+.. automodule:: ue_solver
+
+
+Conversions
+=========================
+
+.. automodule:: ue_solver.conversions
+   
+.. py:function:: networkx_to_geojson(graph_f, geojson_outf, simple_geom=False)
+
+ Converts graph_f (a networkx graph) into a pandas DataFrame, then converts the DataFrame into a geoJSON file
+
+ :param networkx graph_f: Input road network
+ :param str geojson_outf: File path of out file
+ :param bool simple_geom: set to True if user wants to use less memory by only saving straight-line paths between 
+      origin and destination, rather than actual shape of path
+
+Modify network
+=========================
+.. automodule:: ue_solver.modify_network
+	:members:
+   

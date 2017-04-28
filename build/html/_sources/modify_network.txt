@@ -1,0 +1,11 @@
+Documentation for the Code
+**************************
+
+.. automodule:: ue_solver
+
+
+Modify Network
+=========================
+.. automodule:: ue_solver.modify_network
+	:members:
+   

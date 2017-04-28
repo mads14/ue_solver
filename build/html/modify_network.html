@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Documentation for the Code &mdash; UE Solver 2017 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2017',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="UE Solver 2017 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-ue_solver">
+<span id="documentation-for-the-code"></span><h1>Documentation for the Code<a class="headerlink" href="#module-ue_solver" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-ue_solver.modify_network">
+<span id="modify-network"></span><h2>Modify Network<a class="headerlink" href="#module-ue_solver.modify_network" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ue_solver.modify_network.append_city_names">
+<code class="descclassname">ue_solver.modify_network.</code><code class="descname">append_city_names</code><span class="sig-paren">(</span><em>ca_cities_shp</em>, <em>geojson_f</em>, <em>geojson_outf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ue_solver/modify_network.html#append_city_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ue_solver.modify_network.append_city_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends city type, county, and city name to the geojson network file so that locations are 
+easier to identify. This is specific to the California shapefile data schema, so the next function 
+below (label_road_network) was made to work for general schemas.</p>
+<ul class="simple">
+<li>ca_cities_shp: type str, shapefile of california cities</li>
+<li>geojson_f: type str, geoJSOn file of road network</li>
+<li>geojson_outf: type str, output geoJSON with identifying city names</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="ue_solver.modify_network.cut_links">
+<code class="descclassname">ue_solver.modify_network.</code><code class="descname">cut_links</code><span class="sig-paren">(</span><em>geojson_inf</em>, <em>links_f</em>, <em>geojson_outf</em>, <em>graph_outf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ue_solver/modify_network.html#cut_links"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ue_solver.modify_network.cut_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes links in the road network to simulate roads being closed off or inaccessible.</p>
+<ul class="simple">
+<li>geojson_inf: type str geoJSON file, filepath network geojson file</li>
+<li>links_f: type str CSV file, filepath for csv file of links to delete</li>
+<li>geojson_outf: type str geoJSON file, filepath save locations of modified network geojson file</li>
+<li>graph_outf: type str networkx file, reconstructed graph file from geojson outfile</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="ue_solver.modify_network.label_road_network">
+<code class="descclassname">ue_solver.modify_network.</code><code class="descname">label_road_network</code><span class="sig-paren">(</span><em>input_shp</em>, <em>road_network_geojson</em>, <em>attributes</em>, <em>geojson_outf</em>, <em>rename_attributes=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ue_solver/modify_network.html#label_road_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ue_solver.modify_network.label_road_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generalized function of append_city_names:
+Allows user to specify which attributes to keep from the input shape file
+Spatial join shape file with network, so that network file now has identifying labels</p>
+<ul class="simple">
+<li>input_shp: type str, filepath for generalized shapefile for cities, neighborhoods, from any state</li>
+<li>road_network_geojson: type str, filepath for input geoJSON network file</li>
+<li>attributes: type str OR str array, selected attributes that will be joined</li>
+<li>geojson_outf: type str, filepath for output file with identifying labels</li>
+<li>rename_attributes: type str OR str array, either string or array of strings (should match attributes), can be used if user
+would like to rename the attributes to more user-friendly names</li>
+</ul>
+<p>Example:
+label_road_network(&#8216;maryland_counties.shp&#8217;,&#8217;network.geojson&#8217;,&#8217;countyname00&#8217;,&#8217;new_network.geojson&#8217;, &#8216;CountyName&#8217;)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ue_solver.modify_network.reassign_node_ids">
+<code class="descclassname">ue_solver.modify_network.</code><code class="descname">reassign_node_ids</code><span class="sig-paren">(</span><em>G</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ue_solver/modify_network.html#reassign_node_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ue_solver.modify_network.reassign_node_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>assign node ids 1,...,number_of_nodes, to the nodes in the graph
+assign init and term properties to the corresponding links.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ue_solver.modify_network.remove_duplicate_links">
+<code class="descclassname">ue_solver.modify_network.</code><code class="descname">remove_duplicate_links</code><span class="sig-paren">(</span><em>geojson_inf</em>, <em>geojson_outf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ue_solver/modify_network.html#remove_duplicate_links"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ue_solver.modify_network.remove_duplicate_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this is the first time creating a geoJSON from the networkx file, remove duplicate records for streets. 
+For example, when the spatial join joins the networkx with the geoJSON, some streets may connect two cities 
+and will therefore be recorded twice, once for city A and once for city B.</p>
+<p>Removing duplicates will just keep the first city that was joined to the street.</p>
+<ul class="simple">
+<li>geojson_inf: original geoJSON</li>
+<li>geojson_outf: output geoJSON with removed duplicates</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="ue_solver.modify_network.remove_non_accessible_nodes">
+<code class="descclassname">ue_solver.modify_network.</code><code class="descname">remove_non_accessible_nodes</code><span class="sig-paren">(</span><em>G</em>, <em>start_node=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ue_solver/modify_network.html#remove_non_accessible_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ue_solver.modify_network.remove_non_accessible_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove all nodes in graph G that are not accessible from the start node.
+If start_node = None, then set start node to middle node.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ue_solver.modify_network.update_capacity">
+<code class="descclassname">ue_solver.modify_network.</code><code class="descname">update_capacity</code><span class="sig-paren">(</span><em>attr_dict</em>, <em>percent_cap</em>, <em>geojson_inf</em>, <em>geojson_outf</em>, <em>graph_f=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ue_solver/modify_network.html#update_capacity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ue_solver.modify_network.update_capacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>update a network file by changing the capacity according to the fields in attr_dict</p>
+<p>inputs
+attr_dict = {key: [list of values that will be changed]}</p>
+<blockquote>
+<div>example: {&#8216;county&#8217;: [&#8216;Alameda&#8217;, &#8216;Berkeley&#8217;, &#8216;Emeryville&#8217;]}</div></blockquote>
+<p>precent_cap = type decimal, percent of existing capacity roads will now have
+geojson_in = type str, filepath network geojson file
+geojson_out = type str, filepath save locations of modified network geojson file
+graph_f = path of updated networkx or None if don&#8217;t want to save networkx graph</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Documentation for the Code</a><ul>
+<li><a class="reference internal" href="#module-ue_solver.modify_network">Modify Network</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/modify_network.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Maddie Sheehan, Heather Chen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/modify_network.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
