@@ -77,7 +77,7 @@ def end_prop(next):
 def prop(name, value):
     # try:
     #deleted unicode because unicode was replaced by str in python3
-    if type(value) in [str]: return '        "{}": "{}",\n'.format(name, value)
+    if str(type(value)) in ["str", "unicode"]: return '        "{}": "{}",\n'.format(name, value)
     return '        "{}": {},\n'.format(name, value)
     # except(UnicodeEncodeError):
         # if type(value) in [str, unicode]: return '        "{}": "{}",\n'.format(name, 'NA')
