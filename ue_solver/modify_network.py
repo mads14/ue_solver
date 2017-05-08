@@ -1,8 +1,10 @@
+from __future__ import absolute_import, division, print_function
+from future.builtins.misc import input
 import networkx as nx
 from networkx.readwrite import json_graph
-# from haversine import haversine
 from sklearn.neighbors import KNeighborsClassifier
 from ue_solver.conversions import *
+from ue_solver.utils import check_savepath
 from geopandas.tools import sjoin
 import json
 import geopandas as gpd
@@ -195,14 +197,10 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
                                  links['capacity']*percent_cap,
                                  links['capacity'])
 
-    if not os.path.exists(os.path.dirname(geojson_outf)):
-        try:
-            os.makedirs(os.path.dirname(geojson_outf))
-        except OSError as exc:
-            if exc.errno != errno.EEXIST:
-                raise
-    with open(geojson_outf, 'w') as f:
-        f.write(links.to_json())
+    save_results = check_savepath(geojson_outf)
+        if save_results:
+            with open(geojson_outf, 'w') as f:
+                f.write(links.to_json())
 
     if graph_f != None:
         geojson_to_networkx(geojson_outf, graph_f)

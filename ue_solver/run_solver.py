@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function
+from future.builtins.misc import input
 import sys
 import subprocess
 import os
@@ -36,6 +38,7 @@ def run_solver(network_file, demand_file, output_file, distance_factor=0,
     print('done in', time.time()-start, 'sec')
 
 from ue_solver.modify_network import add_virtual_nodes
+from ue_solver.modify_network import reassign_node_ids
 from ue_solver.conversions import graph_to_network_file
 from ue_solver.map_demand import demand_to_virtual_node
 

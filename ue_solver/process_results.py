@@ -1,10 +1,14 @@
+from __future__ import absolute_import, division, print_function
+from future.builtins.misc import input
 import geopandas as gpd
 import pandas as pd
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
+from ue_solver.utils import check_savepath
 import matplotlib.pyplot as plt
 import matplotlib
 import os
+
 
 
 
@@ -18,8 +22,10 @@ def results_to_geojson(results_f, geojson_inf, geojson_outf):
     - geojson_outf = string, path save location for results geojson
     '''
     geodf = create_results_df(results_f, geojson_inf)
-    with open(geojson_outf, 'w') as f:
-        f.write(geodf.to_json())
+    save_results = check_savepath(geojson_outf)
+    if save_results:
+        with open(geojson_outf, 'w') as f:
+            f.write(geodf.to_json())
 
 
 def create_results_df(results_f, network_geojson):
@@ -44,6 +50,12 @@ def create_results_df(results_f, network_geojson):
     links['flow/capacity'] = links['flow']/links['capacity']
     
     return links
+
+
+def get_total_demand(demand_f, demand_scale):
+    demand = pd.read_csv(demand_f)
+    totalDemand = sum(demand.iloc[:,2])/demand_scale
+    return totalDemand
 
     
 def geoj_vmt_vht_delay(results_geoj, cities_aggregate_output_file, output_summary, totalODflow = 0, min_speed = 0, save_path = 0):
@@ -99,20 +111,10 @@ def df_vmt_vht_delay(df, output_summary, totalODflow = 0, min_speed = 0):
              'vht': [totalvht, float(totalvht/totalODflow)],
              'delay': [totaldelay, float(totaldelay/totalODflow)]}
         totaldf = pd.DataFrame(d, index = ['total','per passenger'])
-        if not os.path.exists(os.path.dirname(output_summary)):
-            try:
-                os.makedirs(os.path.dirname(output_summary))
-            except OSError as exc:
-                if exc.errno != errno.EEXIST:
-                    raise
-        # if directory exists            
-        else: 
-            # ask if user wants to rewrite
-            rewrite = input("This file already exists. Would you like to write over it? (y/n)")
-            if rewrite == 'n':
-                return None
-        with open(output_summary,'w') as f:
-            f.write(totaldf.to_csv())
+        save_results = check_savepath(output_summary)
+        if save_results:
+            with open(output_summary,'w') as f:
+                f.write(totaldf.to_csv())
         print('totalvmt: ' + str(totalvmt))
         print('totalvht: ' + str(totalvht))
         print('totaldelay: ' + str(totaldelay))
@@ -123,21 +125,23 @@ def df_vmt_vht_delay(df, output_summary, totalODflow = 0, min_speed = 0):
 
 
 def save_plot(df, save_path):
-    matplotlib.style.use('ggplot')
-    pp = PdfPages(save_path)
-    plt.figure(figsize=(20, 20), dpi=400)
-    df.ix[:,'vmt'].plot.bar()
-    plt.title('vmt')
-    pp.savefig()
-    plt.figure(figsize=(20, 20), dpi=400)
-    df.ix[:,'vht'].plot.bar()
-    plt.title('vht')
-    pp.savefig()
-    plt.figure(figsize=(20, 20), dpi=400)
-    df.ix[:,'delay'].plot.bar()
-    plt.title('delay')
-    pp.savefig()
-    pp.close()
+    save_results = check_savepath(save_path)
+    if save_results:
+        matplotlib.style.use('ggplot')
+        pp = PdfPages(save_path)
+        plt.figure(figsize=(20, 20), dpi=400)
+        df.ix[:,'vmt'].plot.bar()
+        plt.title('vmt')
+        pp.savefig()
+        plt.figure(figsize=(20, 20), dpi=400)
+        df.ix[:,'vht'].plot.bar()
+        plt.title('vht')
+        pp.savefig()
+        plt.figure(figsize=(20, 20), dpi=400)
+        df.ix[:,'delay'].plot.bar()
+        plt.title('delay')
+        pp.savefig()
+        pp.close()
 
 
 
