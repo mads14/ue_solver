@@ -158,7 +158,7 @@ def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf
     # spatial join
     links_w_city = sjoin(links, network, 'left')
 
-    links_w_city = links_w_city.reset_index(drop = True).drop_duplicates(subset='index').set_index('index')
+    links_w_city = links_w_city.reset_index().drop_duplicates(subset='index').set_index('index')
     links_w_city = links_w_city.drop('index_right',1)
     with open(geojson_outf, 'w') as f:
         f.write(links_w_city.to_json())
