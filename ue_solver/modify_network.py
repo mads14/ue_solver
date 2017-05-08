@@ -138,7 +138,7 @@ def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf
     links = gpd.GeoDataFrame.from_file(road_network_geojson)
 
     # read input shapefile
-    network = gpd.GeoDataFrame.from_file(input_shp)
+    shape = gpd.GeoDataFrame.from_file(input_shp)
 
     # if only one attribute  
     if type(attributes) == str:
@@ -146,24 +146,43 @@ def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf
 
     # check if column name in input_shp
     for x in attributes:
-        if x not in network.columns:
-            raise ValueError("Column name is not in input_shp")
-    if 'geometry' in network.columns:
-        attributes.append('geometry')        
-    network = network[attributes]        
-    if len(attributes) != (len(rename_attributes) + 1):
+        if x not in shape.columns:
+            raise ValueError("Column name {} is not in input_shp".format(x))
+
+    if len(attributes) != (len(rename_attributes)):
         raise ValueError("Number of attributes different from number of rename attributes.")
     rename_columns = {}
-    for i in range(len(attributes) - 1):
+    for i in range(len(attributes)):
         rename_columns.update({attributes[i]:rename_attributes[i]})
-    network = network.rename(columns = rename_columns)
-    # spatial join
-    links_w_city = sjoin(links, network, 'left')
+    shape = shape.rename(columns = rename_columns)
 
-    links_w_city = links_w_city.reset_index(drop = True).drop_duplicates(subset='index').set_index('index')
+    # chedk if each attribute is already a property in the road network
+    for x in rename_attributes:
+        if x in links.columns:
+            rejoin = input("Attribute '{}' already in the network geojson, do you want to redo join? (y/n)".format(x))
+            if rejoin:
+                links = links.drop(x, 1)
+            else:
+                rename_attributes.remove(x)
+
+    # if there are any files left to join
+    if len(rename_attributes) == 0:
+        print ("There are no new attributes to join")
+        return None
+    
+    rename_attributes.append('geometry')
+    shape = shape[rename_attributes]        
+
+
+    # spatial join
+    links_w_city = sjoin(links, shape, 'left')
+
+    links_w_city = links_w_city.reset_index().drop_duplicates(subset='index').set_index('index')
     links_w_city = links_w_city.drop('index_right',1)
-    with open(geojson_outf, 'w') as f:
-        f.write(links_w_city.to_json())
+    save_results = check_savepath(geojson_outf)
+    if save_results:
+        with open(geojson_outf, 'w') as f:
+            f.write(links_w_city.to_json())
 
 
 
@@ -198,9 +217,9 @@ def update_capacity(attr_dict, percent_cap, geojson_inf,
                                  links['capacity'])
 
     save_results = check_savepath(geojson_outf)
-        if save_results:
-            with open(geojson_outf, 'w') as f:
-                f.write(links.to_json())
+    if save_results:
+        with open(geojson_outf, 'w') as f:
+            f.write(links.to_json())
 
     if graph_f != None:
         geojson_to_networkx(geojson_outf, graph_f)
