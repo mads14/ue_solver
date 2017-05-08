@@ -75,12 +75,8 @@ def end_prop(next):
     return '    }}]\n'
 
 def prop(name, value):
-    # try:
-    #deleted unicode because unicode was replaced by str in python3
-    if str(type(value)) in ["str", "unicode"]: return '        "{}": "{}",\n'.format(name, value)
+    if type(value).__name__ in ["str", "unicode"]: return '        "{}": "{}",\n'.format(name, value)
     return '        "{}": {},\n'.format(name, value)
-    # except(UnicodeEncodeError):
-        # if type(value) in [str, unicode]: return '        "{}": "{}",\n'.format(name, 'NA')
         
 def df_to_geoJson(df, geojson_fileout, with_flow=False):
     '''

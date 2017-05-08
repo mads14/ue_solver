@@ -140,30 +140,28 @@ def label_road_network(input_shp, road_network_geojson, attributes, geojson_outf
 
     # if only one attribute  
     if type(attributes) == str:
-        if attributes in network.columns:
-            network = network[[attributes, 'geometry']]
-            if rename_attributes is not None:
-                network = network.rename(columns={attributes:rename_attributes})
-        else:
-            raise ValueError("Column name is not in input_shp")
+        attributes = [attributes]
 
-    # if multiple attributes
-    elif type(attributes) is list:
-        # check if column name in input_shp
-        for x in attributes:
-            if x not in network.columns:
-                raise ValueError("Column name is not in input_shp")
-        if 'geometry' in network.columns:
-            attributes.append('geometry')
-        network = network[[attributes]]
-        if len(attributes) != len(rename_attributes):
-            raise ValueError("Number of attributes different from number of rename attributes.")
-        rename_columns = {}
-        for i in range(len(attributes)):
-            rename_columns.update({attributes[i]:rename_attributes[i]})
-        network = network.rename(columns = rename_columns)
+    # check if column name in input_shp
+    for x in attributes:
+        if x not in network.columns:
+            raise ValueError("Column name is not in input_shp")
+    if 'geometry' in network.columns:
+        attributes.append('geometry')        
+    network = network[attributes]        
+    if len(attributes) != (len(rename_attributes) + 1):
+        raise ValueError("Number of attributes different from number of rename attributes.")
+    rename_columns = {}
+    for i in range(len(attributes) - 1):
+        rename_columns.update({attributes[i]:rename_attributes[i]})
+    network = network.rename(columns = rename_columns)
     # spatial join
     links_w_city = sjoin(links, network, 'left')
+
+    links_w_city = links_w_city.reset_index(drop = True).drop_duplicates(subset='index').set_index('index')
+    links_w_city = links_w_city.drop('index_right',1)
+    with open(geojson_outf, 'w') as f:
+        f.write(links_w_city.to_json())
 
 
 
@@ -303,7 +301,7 @@ def remove_duplicate_links(geojson_inf, geojson_outf):
     networkdf = gpd.GeoDataFrame.from_file(geojson_inf)
     networkdf = networkdf.sort_values(by = ['init', 'term', 'capacity'])
     df = networkdf.drop_duplicates(subset = ['init', 'term'], keep = 'last')
-    df = df.reset_index(level=['osm_init', 'osm_term'])
+    df = df.reset_index(level=['osm_init', 'osm_term'], drop = True)
     df['key'] = 0
     with open(geojson_outf, 'w') as f:
         f.write(df.to_json())
