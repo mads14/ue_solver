@@ -28,7 +28,6 @@ features in this sovler.
 Also see [the documenatation](https://mads14.github.io/ue_solver/build/html/index.html#).
 And [sample Bay Area input files](https://paper.dropbox.com/doc/Bay-Area-UE-Solver-resources-W9SLplNM8J3ljws9VFZaF)
 
-The image below represent the baseline morning commute congestion in the San Francisco Bay Area, as determined by the UE solver 
-given the sample inputs
+The image below represent the baseline morning commute congestion in the San Francisco Bay Area, as determined by the UE solver.
 
 <img src="https://www.dropbox.com/s/hu3u7kyawc408jw/ue_result.png?raw=1" alt="Drawing" style="width: 500px;"/>
