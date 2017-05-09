@@ -9,9 +9,9 @@ The solver is finding the [static user equilibrium](https://en.wikipedia.org/wik
 network flows. The travel time per road segment (link) is assumed to be a function of the link's flow/capacity and is set 
 according to the Bureau of Public Roads (BPR) link congestion function:
 
-\[TT_a = TT_{a,free-flow} \left( {1 + 0.15\left( {\frac{{v_a }}{{c_a }}} \right)^4 } \right) \]
+\\[TT_a = TT_{a,free-flow} \left( {1 + 0.15\left( {\frac{{v_a }}{{c_a }}} \right)^4 } \right) \\]
 
-where \(TT_a\) = Average Travel time on link a; \(TT_{free-flow}\) = Free flow travel time on link a; \(v_a\) = volume of traffic on link a per unit of time (somewhat more accurately: flow attempting to use link a); and \(c_a\) = capacity of link a per unit of time. 
+where \\(TT_a\\) = Average Travel time on link a; \\(TT_{free-flow}\\) = Free flow travel time on link a; \\(v_a\\) = volume of traffic on link a per unit of time (somewhat more accurately: flow attempting to use link a); and \\(c_a\\) = capacity of link a per unit of time. 
 
 * * *
 
