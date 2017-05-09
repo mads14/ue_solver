@@ -1,7 +1,9 @@
 from __future__ import absolute_import, division, print_function
 from future.builtins.misc import input
+from utils import check_savepath
 import sys
 import subprocess
+import platform
 import os
 import time
 
@@ -10,13 +12,21 @@ import time
 def run_solver(network_file, demand_file, output_file, distance_factor=0, 
                toll_factor=0, gap=10.0):
     
+    make_command = "cd M_Steel_solver \n"
+    if platform.system() == 'Linux':
+      make_command += "make -f Makefile_linux\n"
+    elif platform.system() == 'Windows':
+      make_command += "make -f Makefile\n" 
+    else:
+      make_command += "make -f Makefile_Mac_OS\n"
+    make_command += "cd ..\n"
+
     distance_factor = str(distance_factor)
     toll_factor = str(toll_factor)
     gap = str(gap)
 
     #TODO test inputs!! make sure file inputs are right format!
-    # print appropriate error messages.
-    
+    # print appropriate error messages.    
     solver_command = " ".join(["M_Steel_Solver/GEF",
                                network_file,
                                demand_file,
@@ -29,6 +39,7 @@ def run_solver(network_file, demand_file, output_file, distance_factor=0,
 
     #create and write the .sh file
     writeSolverSh = open("Solver.sh", "w")
+    writeSolverSh.write(make_command)
     writeSolverSh.write(solver_command)
     writeSolverSh.close()
 
@@ -58,6 +69,10 @@ def run_solver_full(network_graph, taz_demand_f, output_file, taz_shapefile,
                            demand_outf=demand_file)
 
     # 4. run solver:
-    run_solver(network_file, demand_file, output_file, distance_factor, toll_factor, gap)
+    save_results = check_savepath(output_file)
+    if save_results:
+      run_solver(network_file, demand_file, output_file, distance_factor, toll_factor, gap)
+    else:
+      print ('Solver did not run because you elected not to overwrite file. Please change file name and run again')
 
 

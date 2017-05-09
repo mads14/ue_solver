@@ -193,7 +193,7 @@ def save_graph(G, filepath):
 
     # dump json to a file
     save_results = check_savepath(filepath)
-    if save_results
+    if save_results:
         with open(filepath, 'w') as outfile:
             json.dump(data, fp = outfile, cls = MyEncoder)
 

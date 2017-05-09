@@ -12,21 +12,20 @@ import os
 
 
 def check_savepath(savepath):
+    save_results = True
     if not os.path.exists(os.path.dirname(savepath)):
         try:
             os.makedirs(os.path.dirname(savepath))
-            save_res = True
         except OSError as exc:
             if exc.errno != errno.EEXIST:
                 raise
-    # if directory exists            
-    else: 
+    # if file exists            
+    elif os.path.exists(savepath): 
         # ask if user wants to rewrite
         rewrite = input("The file '{}' already exists. Would you like to write over it? (y/n)"
                         .format(os.path.relpath(savepath)))
         if rewrite == 'n':
-            save_res = False
-        else:
-        	save_res = True
-    return save_res
+            save_results = False
+
+    return save_results
     
