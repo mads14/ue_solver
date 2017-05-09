@@ -11,14 +11,12 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
-   getting_started.rst
-
    code.rst
 
 
 
-Indices and tables
-==================
+Indices and tables:
+
 
 * :ref:`genindex`
 * :ref:`modindex`

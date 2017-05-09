@@ -27,10 +27,22 @@
     <link rel="top" title="UE Solver 2017 documentation" href="index.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">UE Solver 2017 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -43,33 +55,33 @@
 <span id="installing-docdir"></span><h2>Installing your doc directory<a class="headerlink" href="#installing-your-doc-directory" title="Permalink to this headline">¶</a></h2>
 <p>You may already have sphinx <a class="reference external" href="http://sphinx.pocoo.org/">sphinx</a>
 installed &#8211; you can check by doing:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python -c &#39;import sphinx&#39;
+<div class="highlight-python"><div class="highlight"><pre>python -c &#39;import sphinx&#39;
 </pre></div>
 </div>
 <p>If that fails grab the latest version of and install it with:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>&gt; sudo easy_install -U Sphinx
+<div class="highlight-python"><div class="highlight"><pre>&gt; sudo easy_install -U Sphinx
 </pre></div>
 </div>
 <p>Now you are ready to build a template for your docs, using
 sphinx-quickstart:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>&gt; sphinx-quickstart
+<div class="highlight-python"><div class="highlight"><pre>&gt; sphinx-quickstart
 </pre></div>
 </div>
 <p>accepting most of the defaults.  I choose &#8220;sampledoc&#8221; as the name of my
 project.  cd into your new directory and check the contents:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>home:~/tmp/sampledoc&gt; ls
+<div class="highlight-python"><div class="highlight"><pre>home:~/tmp/sampledoc&gt; ls
 Makefile      _static         conf.py
 _build                _templates      index.rst
 </pre></div>
 </div>
 <p>The index.rst is the master ReST for your project, but before adding
 anything, let&#8217;s see if we can build some html:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>make html
+<div class="highlight-python"><div class="highlight"><pre>make html
 </pre></div>
 </div>
 <p>If you now point your browser to <code class="file docutils literal"><span class="pre">_build/html/index.html</span></code>, you
 should see a basic sphinx site.</p>
-<img alt="_images/basic_screenshot.png" src="_images/basic_screenshot.png" />
+<img alt="_static/basic_screenshot.png" src="_static/basic_screenshot.png" />
 <div class="section" id="fetching-the-data">
 <span id="id2"></span><h3>Fetching the data<a class="headerlink" href="#fetching-the-data" title="Permalink to this headline">¶</a></h3>
 <p>Now we will start to customize out docs.  Grab a couple of files from
@@ -83,7 +95,7 @@ the whole git directory and just copy the files I need over for now.
 First, I&#8217;ll cd up back into the directory containing my project, check
 out the &#8220;finished&#8221; product from git, and then copy in just the files I
 need into my <code class="file docutils literal"><span class="pre">sampledoc</span></code> directory:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>home:~/tmp/sampledoc&gt; pwd
+<div class="highlight-python"><div class="highlight"><pre>home:~/tmp/sampledoc&gt; pwd
 /Users/jdhunter/tmp/sampledoc
 home:~/tmp/sampledoc&gt; cd ..
 home:~/tmp&gt; git clone https://github.com/matplotlib/sampledoc.git tutorial
@@ -100,7 +112,7 @@ home:~/tmp&gt; cp tutorial/_static/basic_screenshot.png sampledoc/_static/
 <p>The last step is to modify <code class="file docutils literal"><span class="pre">index.rst</span></code> to include the
 <code class="file docutils literal"><span class="pre">getting_started.rst</span></code> file (be careful with the indentation, the
 &#8220;g&#8221; in &#8220;getting_started&#8221; should line up with the &#8216;:&#8217; in <code class="docutils literal"><span class="pre">:maxdepth</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>Contents:
+<div class="highlight-python"><div class="highlight"><pre>Contents:
 
 .. toctree::
    :maxdepth: 2
@@ -109,7 +121,7 @@ home:~/tmp&gt; cp tutorial/_static/basic_screenshot.png sampledoc/_static/
 </pre></div>
 </div>
 <p>and then rebuild the docs:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd sampledoc
+<div class="highlight-python"><div class="highlight"><pre>cd sampledoc
 make html
 </pre></div>
 </div>
@@ -119,7 +131,7 @@ make html
 <cite>Voila!</cite></p>
 <p>Note we used the image directive to include to the screenshot above
 with:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>.. image:: _static/basic_screenshot.png
+<div class="highlight-python"><div class="highlight"><pre>.. image:: _static/basic_screenshot.png
 </pre></div>
 </div>
 <p>Next we&#8217;ll customize the look and feel of our site to give it a logo,
@@ -146,13 +158,7 @@ the <a class="reference external" href="http://sphinx.pocoo.org/">sphinx</a> sit
 </ul>
 </li>
 </ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
+
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -181,12 +187,12 @@ the <a class="reference external" href="http://sphinx.pocoo.org/">sphinx</a> sit
       &copy;2017, Maddie Sheehan, Heather Chen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
       
       |
       <a href="_sources/getting_started.txt"
-          rel="nofollow">Page source</a>
+          rel="nofollow">Page source</a></li>
     </div>
 
     
