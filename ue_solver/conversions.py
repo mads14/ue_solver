@@ -1,3 +1,6 @@
+from __future__ import absolute_import, division, print_function
+from future.builtins.misc import input
+from ue_solver.utils import check_savepath
 import networkx as nx
 from networkx.readwrite import json_graph
 import geopandas as gpd
@@ -75,12 +78,8 @@ def end_prop(next):
     return '    }}]\n'
 
 def prop(name, value):
-    # try:
-    #deleted unicode because unicode was replaced by str in python3
-    if type(value) in [str]: return '        "{}": "{}",\n'.format(name, value)
+    if type(value).__name__ in ["str", "unicode"]: return '        "{}": "{}",\n'.format(name, value)
     return '        "{}": {},\n'.format(name, value)
-    # except(UnicodeEncodeError):
-        # if type(value) in [str, unicode]: return '        "{}": "{}",\n'.format(name, 'NA')
         
 def df_to_geoJson(df, geojson_fileout, with_flow=False):
     '''
@@ -191,10 +190,12 @@ class MyEncoder(json.JSONEncoder):
 
 def save_graph(G, filepath):
     data =  json_graph.node_link_data(G)
-    # dump json to a file
 
-    with open(filepath, 'w') as outfile:
-        json.dump(data, fp = outfile, cls = MyEncoder)
+    # dump json to a file
+    save_results = check_savepath(filepath)
+    if save_results:
+        with open(filepath, 'w') as outfile:
+            json.dump(data, fp = outfile, cls = MyEncoder)
 
 
 def graph_to_network_file(graph, filepath):

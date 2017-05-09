@@ -4,6 +4,8 @@
 created on Mon Jun 13
 @author: msheehan
 """
+from __future__ import absolute_import, division, print_function
+from future.builtins.misc import input
 import pandas as pd
 import geopandas as gpd
 import numpy as np
@@ -16,6 +18,7 @@ def demand_to_virtual_node(demand_csv, node_dict, scale, demand_outf):
     # taz_node_dict = pd.read_json(taz_dict_f, dtype='int').T
     demand_df = pd.read_csv(demand_csv)
     node_dict = pd.DataFrame.from_dict(node_dict).T
+    demand_df.columns = ['i', 'j', 'flow']
 
     demand_df['origin_node'] = demand_df['i'].map(node_dict['origin'], 'ignore')
     demand_df['dest_node'] = demand_df['j'].map(node_dict['destination'], 'ignore')
