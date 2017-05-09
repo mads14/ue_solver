@@ -22,12 +22,12 @@ simulating road closures, floods, or any sort of disruption in the original road
 Processing the results will convert the assigned travel to a geojson file. In addition, processing results can calculate 
 VMT, VHT, and delay.
 
-
-See [the UE_processes.ipynb](https://github.com/mads14/ue_solver/blob/master/UE_processes.ipynb) for a walk-through of the
+### Resources
+* See [UE_processes.ipynb](https://github.com/mads14/ue_solver/blob/master/UE_processes.ipynb) for a walk-through of the
 features in this sovler. 
-Also see [the documenatation](https://mads14.github.io/ue_solver/build/html/index.html#).
-And [sample Bay Area input files](https://paper.dropbox.com/doc/Bay-Area-UE-Solver-resources-W9SLplNM8J3ljws9VFZaF)
+* See [the documenatation](https://mads14.github.io/ue_solver/build/html/index.html#) for more details on the methods in this package.
+* And [sample Bay Area input files](https://paper.dropbox.com/doc/Bay-Area-UE-Solver-resources-W9SLplNM8J3ljws9VFZaF)
 
 The image below represent the baseline morning commute congestion in the San Francisco Bay Area, as determined by the UE solver.
 
-<img src="https://www.dropbox.com/s/hu3u7kyawc408jw/ue_result.png?raw=1" alt="Drawing" style="width: 500px;"/>
+<img src="https://www.dropbox.com/s/hu3u7kyawc408jw/ue_result.png?raw=1" alt="Drawing" style="width: 400px;"/>
